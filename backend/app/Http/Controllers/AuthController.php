@@ -4,30 +4,24 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\JWTauth;
+use Tymon\JWTAuth\Facades\JWTAuth;
 use App\Models\User;
 
 class AuthController extends Controller
 {
     public function register(Request $request)
     {
-        $adminExists = User::where('role', 'admin')->exists();
         // Validate the user
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
-            'role' => 'required|string|in:student,teacher',
+            'role' => 'required|string|in:admin,student,teacher',
         ]);
-        //create a user
-        $user = User::create([
-            'name' => $request->first_name . ' ' . $request->last_name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'role' => $request->role,
-        ]);
-        //Checking admin exist in the db. if exist error occured
+        
+           //Checking admin exist in the db. if exist error occured
         if($request->role == 'admin'){
+            $adminExists = User::where('role', 'admin')->exists();
             if($adminExists){
                 return response()->json(['error' => 'Admin already exists'], 400);
             }
@@ -35,6 +29,15 @@ class AuthController extends Controller
         elseif (!in_array($request->role,['student','teacher'])) {
             return  response()->json(['error'=> 'invalid role'],400);
         }
+ 
+        //create a user
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+            'role' => $request->role,
+        ]);
+     
 
 
         $token=JWTAuth::fromUser($user);
