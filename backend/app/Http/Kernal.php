@@ -51,10 +51,10 @@ class Kernel extends HttpKernel
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
 
-        // ✅ Custom middleware
+        //Custom middleware-added role based middleware
         'role' => \App\Http\Middleware\RoleMiddleware::class,
 
-        // ✅ JWT middleware from tymon/jwt-auth
+        //JWT middleware from tymon/jwt-auth
         'auth:api' => \Tymon\JWTAuth\Http\Middleware\Authenticate::class,
     ];
 }
